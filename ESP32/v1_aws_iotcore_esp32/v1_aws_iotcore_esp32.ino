@@ -1,3 +1,6 @@
+// Requires "ESP32 by Espressif Systems" under boards manager
+// or "Arduino ESP32 Boards"
+
 // Include required libraries for WiFi, secure connections, MQTT, and JSON
 // parsing
 #include "secrets.h" 
