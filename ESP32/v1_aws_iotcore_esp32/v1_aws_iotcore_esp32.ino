@@ -11,7 +11,7 @@
 #include <WiFiClientSecure.h>
 
 // The MQTT topics that this device should publish/subscribe
-#define AWS_IOT_PUBLISH_TOPIC "/telemetry"  // Topic for publishing sensor data
+#define AWS_IOT_PUBLISH_TOPIC "/6"  // Topic for publishing sensor data
 #define AWS_IOT_SUBSCRIBE_TOPIC \
   "/downlink"  // Topic for receiving commands from AWS
 
