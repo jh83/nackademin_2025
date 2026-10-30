@@ -3,23 +3,23 @@
 
 // Include required libraries for WiFi, secure connections, MQTT, and JSON
 // parsing
-#include "secrets.h" 
+#include "secrets.h"
 #include "WiFi.h"
 //#include "secrets_real.h"
-#include <ArduinoJson.h> // Library > ArduinoJson Benoit Blanchon
-#include <MQTTClient.h> // Library > MQTT by Joel Gaehwiler
+#include <ArduinoJson.h>  // Library > ArduinoJson Benoit Blanchon
+#include <MQTTClient.h>   // Library > MQTT by Joel Gaehwiler
 #include <WiFiClientSecure.h>
 
 // The MQTT topics that this device should publish/subscribe
-#define AWS_IOT_PUBLISH_TOPIC "/telemetry" // Topic for publishing sensor data
-#define AWS_IOT_SUBSCRIBE_TOPIC                                                \
-  "/downlink" // Topic for receiving commands from AWS
+#define AWS_IOT_PUBLISH_TOPIC "/telemetry"  // Topic for publishing sensor data
+#define AWS_IOT_SUBSCRIBE_TOPIC \
+  "/downlink"  // Topic for receiving commands from AWS
 
-long sendInterval = 60000; // Default interval (in milliseconds) at which to
-                           // send telemetry to AWS
+long sendInterval = 60000;  // Default interval (in milliseconds) at which to
+                            // send telemetry to AWS
 
 char
-    THINGNAME[13]; // 12 hex digits from the MAC address, plus a null terminator
+  THINGNAME[13];  // 12 hex digits from the MAC address, plus a null terminator
 
 void setThingName() {
   uint8_t mac[6];
@@ -49,14 +49,15 @@ void connectAWS() {
   // Wait until WiFi connection is established
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    Serial.print("-");
   }
+  Serial.println();
 
   // Configure WiFiClientSecure to use the AWS IoT device credentials for mutual
   // TLS authentication
-  net.setCACert(AWS_CERT_CA);          // Root CA certificate
-  net.setCertificate(AWS_CERT_CRT);    // Device certificate
-  net.setPrivateKey(AWS_CERT_PRIVATE); // Device private key
+  net.setCACert(AWS_CERT_CA);           // Root CA certificate
+  net.setCertificate(AWS_CERT_CRT);     // Device certificate
+  net.setPrivateKey(AWS_CERT_PRIVATE);  // Device private key
 
   // Connect to the MQTT broker on the AWS endpoint (port 8883 is the standard
   // MQTT over TLS port)
@@ -84,12 +85,14 @@ void connectAWS() {
     Serial.print(".");
     delay(100);
   }
+  Serial.println();
 
   // Verify connection was successful
   if (!client.connected()) {
     Serial.println("AWS IoT Timeout!");
     return;
   }
+  Serial.println();
 
   // Subscribe to the downlink topic to receive commands from AWS
   char topic[64];
@@ -124,17 +127,17 @@ bool sendTelemetry() {
   // using random(15, 30) for integers
   Serial.println("Sending telemetry to AWS");
   bool sendResult =
-      publishTelemetry("{\"temperature\":" + String(random(15.0, 30.0)) +
-                       ",\"humidity\":" + String(random(50, 90)) + "}");
+    publishTelemetry("{\"temperature\":" + String(random(15.0, 30.0)) + ",\"humidity\":" + String(random(50, 90)) + "}");
 
   return sendResult;
 }
 
 // Arduino setup function - runs once at startup
 void setup() {
-  Serial.begin(115200); // Initialize serial communication for debugging
-  delay(2000);          // Wait for serial monitor to connect
-  connectAWS();         // Establish connection to AWS IoT Core
+  delay(5000);
+  Serial.begin(115200);  // Initialize serial communication for debugging
+  delay(5000);           // Wait for serial monitor to connect
+  connectAWS();          // Establish connection to AWS IoT Core
 }
 
 // Arduino main loop - runs continuously
