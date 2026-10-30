@@ -1,10 +1,10 @@
 // Include required libraries for WiFi, secure connections, MQTT, and JSON
 // parsing
-// #include "secrets.h"
+#include "secrets.h" 
 #include "WiFi.h"
-#include "secrets_real.h"
-#include <ArduinoJson.h>
-#include <MQTTClient.h>
+//#include "secrets_real.h"
+#include <ArduinoJson.h> // Library > ArduinoJson Benoit Blanchon
+#include <MQTTClient.h> // Library > MQTT by Joel Gaehwiler
 #include <WiFiClientSecure.h>
 
 // The MQTT topics that this device should publish/subscribe
