@@ -3,15 +3,15 @@
 
 // Include required libraries for WiFi, secure connections, MQTT, and JSON
 // parsing
-#include "secrets.h"
+//#include "secrets.h"
 #include "WiFi.h"
-//#include "secrets_real.h"
+#include "secrets_real.h"
 #include <ArduinoJson.h>  // Library > ArduinoJson Benoit Blanchon
 #include <MQTTClient.h>   // Library > MQTT by Joel Gaehwiler
 #include <WiFiClientSecure.h>
 
 // The MQTT topics that this device should publish/subscribe
-#define AWS_IOT_PUBLISH_TOPIC "/telemetry"  // Topic for publishing sensor data
+#define AWS_IOT_PUBLISH_TOPIC "/telemetry"   // Topic for publishing sensor data
 #define AWS_IOT_SUBSCRIBE_TOPIC "/downlink"  // Topic for receiving commands from AWS
 
 long sendInterval = 60000;  // Default interval (in milliseconds) at which to
@@ -82,7 +82,7 @@ void connectAWS() {
   // Attempt to connect to AWS IoT using the thing name as client ID
   while (!client.connect(THINGNAME)) {
     Serial.print(".");
-    delay(100);
+    delay(500);
   }
   Serial.println();
 
@@ -92,13 +92,21 @@ void connectAWS() {
     return;
   }
   Serial.println();
+  Serial.println("AWS IoT Connected!");
 
   // Subscribe to the downlink topic to receive commands from AWS
   char topic[64];
   snprintf(topic, sizeof(topic), "%s%s", THINGNAME, AWS_IOT_SUBSCRIBE_TOPIC);
-  client.subscribe(topic);
+  Serial.print("AWS Subscribing to topic ");
+  Serial.println(String(topic));
 
-  Serial.println("AWS IoT Connected!");
+  bool res = client.subscribe(topic);
+  if (res == false) {
+    Serial.print("AWS Subscribe to topic " + String(topic) + " failed. Restarting in 30 seconds.");
+    delay(30000);
+    ESP.restart();
+  }
+  Serial.println("AWS Subscribed!");
 }
 
 // Publishes telemetry data to AWS IoT Core
